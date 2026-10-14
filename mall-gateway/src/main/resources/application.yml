@@ -1,0 +1,34 @@
+spring:
+  application:
+    name: mall-gateway
+
+  config:
+    import:
+      - optional:nacos:mall-common.yaml
+      - optional:nacos:mall-gateway.yaml
+
+
+  cloud:
+    nacos:
+      server-addr: 192.168.100.128:8848
+      username: nacos
+      password: nacos
+
+      discovery:
+        namespace: cloud-mall
+
+      config:
+        namespace: cloud-mall
+
+# ========== 开启调试日志 ==========
+logging:
+  level:
+    # Gateway 路由匹配详情（能看到请求匹配了哪个路由、转发到了哪个服务）
+    org.springframework.cloud.gateway: DEBUG
+    # HTTP 请求/响应细节（能看到 Gateway 调用下游服务的实际请求和响应）
+    reactor.netty.http.client: DEBUG
+    # Nacos 服务发现日志（能看到服务实例列表、健康检查）
+    com.alibaba.cloud.nacos: DEBUG
+    com.alibaba.nacos: DEBUG
+    # LoadBalancer 负载均衡日志（能看到选择哪个实例）
+    org.springframework.cloud.loadbalancer: DEBUG

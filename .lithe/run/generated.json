@@ -1,0 +1,404 @@
+{
+  "version": 2,
+  "generator": {
+    "fingerprint": "sha256:a12e4a519069896310e6fe235f9722adf3b6eccaf36768e1a67a7804b6238c43",
+    "inputs": {
+      "mall-cart/pom.xml": "sha256:ae3e1580d8423b5925a08dc38c552077723880fc3774acc6a330488d5cc84792",
+      "mall-cart/src/main/java/com/mall/mallcart/MallCartApplication.java": "sha256:8d7d2927495ed0e3f7054374639fcc941e1f0da32b2147484c1bc9d4bb2615a3",
+      "mall-cart/src/main/java/com/mall/mallcart/config/RedisConfig.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/controller/CartController.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/controller/RedisTestController.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/dto/CartAddDTO.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/dto/CartUpdateDTO.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/entity/CartItem.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/feign/ProductFeignClient.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/service/CartService.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/service/impl/CartServiceImpl.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/vo/CartItemVO.java": "path",
+      "mall-cart/src/main/java/com/mall/mallcart/vo/SkuDetailVO.java": "path",
+      "mall-cart/src/test/java/com/mall/mallcart/MallCartApplicationTests.java": "path",
+      "mall-common/pom.xml": "sha256:0ab60a611c1cb059a85abedad27df90b7b97b07ac239960a3725549f882331c1",
+      "mall-common/src/main/java/com/mall/common/exception/BusinessException.java": "path",
+      "mall-common/src/main/java/com/mall/common/exception/GlobalExceptionHandler.java": "path",
+      "mall-common/src/main/java/com/mall/common/result/ErrorCode.java": "path",
+      "mall-common/src/main/java/com/mall/common/result/Result.java": "path",
+      "mall-common/src/main/java/com/mall/common/utils/HashUtils.java": "path",
+      "mall-common/src/main/java/com/mall/common/utils/JwtUtil.java": "path",
+      "mall-common/src/main/java/com/mall/common/utils/PasswordConfig.java": "path",
+      "mall-common/src/test/java/com/mall/common/MallCommonApplicationTests.java": "path",
+      "mall-gateway/pom.xml": "sha256:2a0c43043a738a740048ad640b870d99f13c249fabeec2e0d228df047f0d16a9",
+      "mall-gateway/src/main/java/com/mall/mallgateway/MallGatewayApplication.java": "sha256:3aae9115fc6f6608b5e19217a8c3bb2f42e71b9a752fe30cb668cced7cc3f079",
+      "mall-gateway/src/main/java/com/mall/mallgateway/config/CorsConfig.java": "path",
+      "mall-gateway/src/main/java/com/mall/mallgateway/filter/AuthGlobalFilter.java": "path",
+      "mall-order/pom.xml": "sha256:9363f71d6a744f4d415bfccc6d1a1bb4eebfa55fc9dc4c50ab388d348318335e",
+      "mall-order/src/main/java/com/mall/mallorder/MallOrderApplication.java": "sha256:a610c1569d888630aa86a3fdd7306dbcc62756c7e4abc0d3446e03037195862a",
+      "mall-order/src/test/java/com/mall/mallorder/MallOrderApplicationTests.java": "path",
+      "mall-product/pom.xml": "sha256:32699b80eb89856af923f4c6de7de43ab58ca69260a86031465c12dea1de9472",
+      "mall-product/src/main/java/com/mall/mallproduct/MallProductApplication.java": "sha256:b38f8f01af34902635ec12f4ee07ad1c40ebb16d16f0a11109ceb6c33cadc4ac",
+      "mall-product/src/main/java/com/mall/mallproduct/category/controller/CategoryController.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/category/dto/CategoryDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/category/entity/Category.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/category/mapper/CategoryMapper.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/category/service/CategoryService.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/category/service/impl/CategoryServiceImpl.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/category/vo/CategoryDetailVO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/category/vo/CategoryListVO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/product/config/MybatisPlusConfig.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/product/controller/BrandController.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/product/controller/ProductController.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/product/dto/BrandDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/product/entity/Brand.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/product/mapper/BrandMapper.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/product/service/BrandService.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/product/service/impl/BrandServiceImpl.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/controller/SkuController.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/dto/SkuDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/dto/SkuQueryDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/dto/SkuStatusDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/dto/SkuStockDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/dto/SkuUpdateDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/entity/Sku.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/mapper/SkuMapper.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/service/SkuService.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/service/impl/SkuServiceImpl.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/vo/SkuDetailVO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/vo/SkuSpecVO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/sku/vo/SkuVO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/skuspec/entity/SkuSpec.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/skuspec/mapper/SkuSpecMapper.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/skuspec/service/SkuSpecService.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/skuspec/service/impl/SkuSpecServiceImpl.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spec/controller/SpecController.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spec/dto/SpecDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spec/dto/SpecUpdateDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spec/entity/Spec.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spec/mapper/SpecMapper.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spec/service/SpecService.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spec/service/impl/SpecServiceImpl.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/specvalue/controller/SpecValueController.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/specvalue/dto/SpecValueDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/specvalue/dto/SpecValueUpdateDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/specvalue/entity/SpecValue.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/specvalue/mapper/SpecValueMapper.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/specvalue/service/SpecValueService.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/specvalue/service/impl/SpecValueServiceImpl.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/controller/SupController.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/dto/SpuDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/dto/SpuQueryDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/dto/SpuUpdateDTO.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/entity/Spu.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/mapper/SpuMapper.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/service/SpuService.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/service/impl/SpuServiceImpl.java": "path",
+      "mall-product/src/main/java/com/mall/mallproduct/spu/vo/SpuVO.java": "path",
+      "mall-product/src/test/java/com/mall/product/MallProductApplicationTests.java": "path",
+      "mall-user/pom.xml": "sha256:0ec018fb4be9f64865183edc98eef97b299e0196df9cd0ad65bef9789ac26eef",
+      "mall-user/src/main/java/com/mall/malluser/MallUserApplication.java": "sha256:452e8652764d06f0f931c72df37a5d378ef8c87c97cfad7e8db55e6a114ca140",
+      "mall-user/src/main/java/com/mall/malluser/config/SecurityConfig.java": "path",
+      "mall-user/src/main/java/com/mall/malluser/controller/UserController.java": "path",
+      "mall-user/src/main/java/com/mall/malluser/dto/UserLoginDTO.java": "path",
+      "mall-user/src/main/java/com/mall/malluser/dto/UserRegisterDTO.java": "path",
+      "mall-user/src/main/java/com/mall/malluser/entity/UserInfo.java": "path",
+      "mall-user/src/main/java/com/mall/malluser/mapper/UserInfoMapper.java": "path",
+      "mall-user/src/main/java/com/mall/malluser/service/UserService.java": "path",
+      "mall-user/src/main/java/com/mall/malluser/service/impl/UserServiceImpl.java": "path",
+      "mall-user/src/main/java/com/mall/malluser/vo/LoginVO.java": "path",
+      "mall-user/src/test/java/com/mall/malluser/MallUserApplicationTests.java": "path",
+      "pom.xml": "sha256:b05393af6a834e6ad21282003b9c36c538ece7b9596af74b05820e9cb451a006"
+    }
+  },
+  "configurations": [
+    {
+      "id": "java-main:com.mall.mallcart.MallCartApplication",
+      "name": "MallCartApplication",
+      "provider": "java.main",
+      "execution": "application",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "native",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-cart/src/main/java/com/mall/mallcart/MallCartApplication.java",
+          "sourceSet": "main"
+        },
+        "maven": {
+          "module": "mall-cart",
+          "mainClass": "com.mall.mallcart.MallCartApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-cart/src/main/java/com/mall/mallcart/MallCartApplication.java"
+    },
+    {
+      "id": "java-main:com.mall.mallgateway.MallGatewayApplication",
+      "name": "MallGatewayApplication",
+      "provider": "java.main",
+      "execution": "application",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "native",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-gateway/src/main/java/com/mall/mallgateway/MallGatewayApplication.java",
+          "sourceSet": "main"
+        },
+        "maven": {
+          "module": "mall-gateway",
+          "mainClass": "com.mall.mallgateway.MallGatewayApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-gateway/src/main/java/com/mall/mallgateway/MallGatewayApplication.java"
+    },
+    {
+      "id": "java-main:com.mall.mallorder.MallOrderApplication",
+      "name": "MallOrderApplication",
+      "provider": "java.main",
+      "execution": "application",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "native",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-order/src/main/java/com/mall/mallorder/MallOrderApplication.java",
+          "sourceSet": "main"
+        },
+        "maven": {
+          "module": "mall-order",
+          "mainClass": "com.mall.mallorder.MallOrderApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-order/src/main/java/com/mall/mallorder/MallOrderApplication.java"
+    },
+    {
+      "id": "java-main:com.mall.mallproduct.MallProductApplication",
+      "name": "MallProductApplication",
+      "provider": "java.main",
+      "execution": "application",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "native",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-product/src/main/java/com/mall/mallproduct/MallProductApplication.java",
+          "sourceSet": "main"
+        },
+        "maven": {
+          "module": "mall-product",
+          "mainClass": "com.mall.mallproduct.MallProductApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-product/src/main/java/com/mall/mallproduct/MallProductApplication.java"
+    },
+    {
+      "id": "java-main:com.mall.malluser.MallUserApplication",
+      "name": "MallUserApplication",
+      "provider": "java.main",
+      "execution": "application",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "native",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-user/src/main/java/com/mall/malluser/MallUserApplication.java",
+          "sourceSet": "main"
+        },
+        "maven": {
+          "module": "mall-user",
+          "mainClass": "com.mall.malluser.MallUserApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-user/src/main/java/com/mall/malluser/MallUserApplication.java"
+    },
+    {
+      "id": "current-file",
+      "name": "Current File",
+      "provider": "java.current-file",
+      "execution": "application",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "native",
+      "toolchains": {
+        "java": "project-jdk"
+      },
+      "debug": {
+        "adapter": "jdwp"
+      },
+      "extensions": {
+        "maven": {
+          "module": "."
+        }
+      },
+      "disabled": false
+    },
+    {
+      "id": "spring-boot.maven:mall-cart",
+      "name": "mall-cart",
+      "provider": "spring-boot.maven",
+      "execution": "service",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "declared",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "debug": {
+        "adapter": "jdwp"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-cart/src/main/java/com/mall/mallcart/MallCartApplication.java"
+        },
+        "maven": {
+          "module": "mall-cart",
+          "mainClass": "com.mall.mallcart.MallCartApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-cart/pom.xml"
+    },
+    {
+      "id": "spring-boot.maven:mall-gateway",
+      "name": "mall-gateway",
+      "provider": "spring-boot.maven",
+      "execution": "service",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "declared",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "debug": {
+        "adapter": "jdwp"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-gateway/src/main/java/com/mall/mallgateway/MallGatewayApplication.java"
+        },
+        "maven": {
+          "module": "mall-gateway",
+          "mainClass": "com.mall.mallgateway.MallGatewayApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-gateway/pom.xml"
+    },
+    {
+      "id": "spring-boot.maven:mall-order",
+      "name": "mall-order",
+      "provider": "spring-boot.maven",
+      "execution": "service",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "declared",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "debug": {
+        "adapter": "jdwp"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-order/src/main/java/com/mall/mallorder/MallOrderApplication.java"
+        },
+        "maven": {
+          "module": "mall-order",
+          "mainClass": "com.mall.mallorder.MallOrderApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-order/pom.xml"
+    },
+    {
+      "id": "spring-boot.maven:mall-product",
+      "name": "mall-product",
+      "provider": "spring-boot.maven",
+      "execution": "service",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "declared",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "debug": {
+        "adapter": "jdwp"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-product/src/main/java/com/mall/mallproduct/MallProductApplication.java"
+        },
+        "maven": {
+          "module": "mall-product",
+          "mainClass": "com.mall.mallproduct.MallProductApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-product/pom.xml"
+    },
+    {
+      "id": "spring-boot.maven:mall-user",
+      "name": "mall-user",
+      "provider": "spring-boot.maven",
+      "execution": "service",
+      "args": [],
+      "cwd": ".",
+      "env": {},
+      "confidence": "declared",
+      "toolchains": {
+        "java": "project-jdk",
+        "maven": "project-maven"
+      },
+      "debug": {
+        "adapter": "jdwp"
+      },
+      "extensions": {
+        "java": {
+          "source": "mall-user/src/main/java/com/mall/malluser/MallUserApplication.java"
+        },
+        "maven": {
+          "module": "mall-user",
+          "mainClass": "com.mall.malluser.MallUserApplication"
+        }
+      },
+      "disabled": false,
+      "source": "mall-user/pom.xml"
+    }
+  ]
+}

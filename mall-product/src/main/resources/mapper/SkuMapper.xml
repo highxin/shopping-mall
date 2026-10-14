@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.mall.mallproduct.sku.mapper.SkuMapper">
+    <select id="selectSkuPage"
+            resultType="com.mall.mallproduct.sku.vo.SkuVO">
+        SELECT
+        s.id,
+        s.spu_id,
+        p.name AS spu_name,
+        s.name,
+        s.price,
+        s.stock,
+        s.status
+        FROM product_sku s
+        LEFT JOIN product_spu p
+        ON s.spu_id = p.id
+        WHERE s.deleted = 0
+        <if test="query.name != null and query.name != ''">
+            AND s.name LIKE CONCAT('%', #{query.name}, '%')
+        </if>
+        <if test="query.spuId != null">
+            AND s.spu_id = #{query.spuId}
+        </if>
+        <if test="query.status != null">
+            AND s.status = #{query.status}
+        </if>
+        ORDER BY s.id DESC
+    </select>
+
+    <resultMap id="skuDetailMap"
+               type="com.mall.mallproduct.sku.vo.SkuDetailVO">
+        <!-- SKU主对象的唯一ID -->
+        <id property="id" column="sku_id"/>
+        <result property="spuId" column="spu_id"/>
+        <result property="spuName" column="spu_name"/>
+        <result property="name" column="name"/>
+        <result property="price" column="price"/>
+        <result property="stock" column="stock"/>
+        <result property="status" column="status"/>
+        <!-- 一个SKU对应多个规格 -->
+        <collection property="specs"
+                    ofType="com.mall.mallproduct.sku.vo.SkuSpecVO">
+            <result property="specName"
+                    column="spec_name"/>
+            <result property="specValue"
+                    column="spec_value"/>
+        </collection>
+    </resultMap>
+
+    <select id="selectSkuDetail" resultMap="skuDetailMap">
+        SELECT
+        s.id AS sku_id,
+        s.spu_id,
+        p.name AS spu_name,
+        s.name,
+        s.price,
+        s.stock,
+        s.status,
+        spec.name AS spec_name,
+        sv.value AS spec_value
+        FROM product_sku s
+        LEFT JOIN product_spu p
+                  ON s.spu_id = p.id
+        LEFT JOIN product_sku_spec ss
+                  ON s.id = ss.sku_id
+        LEFT JOIN product_spec spec
+                  ON ss.spec_id = spec.id
+        LEFT JOIN product_spec_value sv
+                  ON ss.spec_value_id = sv.id
+        WHERE s.id = #{id}
+        AND s.deleted = 0
+    </select>
+    <update id="deductStock">
+        update `product_sku`
+        set stock = stock - #{quantity}
+        where id = #{skuId}
+          and stock >= #{quantity}
+    </update>
+    <update id="addStock">
+        update `product_sku`
+        set stock = stock + #{quantity}
+        where id = #{skuId}
+    </update>
+</mapper>

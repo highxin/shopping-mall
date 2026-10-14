@@ -1,0 +1,31 @@
+spring:
+  application:
+    name: mall-order
+
+  config:
+    import:
+      - optional:nacos:mall-common.yaml
+      - optional:nacos:mall-order.yaml
+  cloud:
+    nacos:
+      server-addr: 192.168.100.128:8848
+      username: nacos
+      password: nacos
+      discovery:
+        namespace: cloud-mall
+      config:
+        namespace: cloud-mall
+
+seata:
+  enabled: true
+  application-id: ${spring.application.name}
+  tx-service-group: my_tx_group
+  service:
+    vgroup-mapping:
+      my_tx_group: default
+    grouplist:
+      default: 192.168.100.128:8091
+  registry:
+    type: file
+  config:
+    type: file
