@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mall.common.constants.OrderMqConstant;
 import com.mall.common.dto.SkuStockDTO;
 import com.mall.common.enums.OrderStatusEnum;
 import com.mall.common.exception.BusinessException;
@@ -11,6 +12,8 @@ import com.mall.common.exception.OrderException;
 import com.mall.common.exception.errorcode.OrderErrorCode;
 import com.mall.common.result.Result;
 import com.mall.common.dto.DeleteCartDTO;
+import com.mall.mallorder.constant.OrderTimeConstant;
+import com.mall.mallorder.dto.OrderCancelMessage;
 import com.mall.mallorder.dto.OrderDTO;
 import com.mall.mallorder.dto.OrderPageDTO;
 import com.mall.mallorder.entity.OrderAddress;
@@ -26,10 +29,10 @@ import com.mall.mallorder.service.OrderItemService;
 import com.mall.mallorder.transition.OrderStatusTransition;
 import com.mall.mallorder.vo.*;
 import lombok.RequiredArgsConstructor;
+import org.apache.rocketmq.spring.core.RocketMQTemplate;
 import org.apache.seata.spring.annotation.GlobalTransactional;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -45,6 +48,7 @@ import cn.hutool.core.util.RandomUtil;
 public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo> implements OrderInfoService {
 
     private final OrderItemService orderItemService;
+    private final RocketMQTemplate rocketMQTemplate;
     private final OrderAddressService orderAddressService;
     private final AddressFeignClient addressFeignClient;
     private final CartFeignClient cartFeignClient;
@@ -101,6 +105,12 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         if (skuIds.isEmpty()) {
             throw new OrderException(OrderErrorCode.ORDER_ITEM_SKU_IDS_EMPTY);
         }
+
+        // 8.发送订单取消消息
+        OrderCancelMessage message = new OrderCancelMessage();
+        message.setOrderNo(orderNo);
+        message.setUserId(userId);
+        rocketMQSendCancelMessage(message);
 
         // 9.删除购物车商品
             DeleteCartDTO dto = new DeleteCartDTO();
@@ -363,6 +373,47 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         orderItemService.saveBatch(orderItems);
         // 返回选中的购物车商品Id
         return skuIds;
+    }
+
+    // 发送超时取消订单消息
+    private void rocketMQSendCancelMessage(OrderCancelMessage message){
+        rocketMQTemplate.syncSendDeliverTimeMills(
+                OrderMqConstant.ORDER_CANCEL_TOPIC,
+                message,
+                OrderTimeConstant.ORDER_CANCEL_DELAY_MILLIS
+        );
+    }
+
+    // 订单超时取消方法
+    @Override
+    @GlobalTransactional(name = "cancel-order-timeout-tx", rollbackFor = Exception.class, timeoutMills = 300000)
+    public void cancelOrderByTimeout(String orderNo, Long userId) {
+        // 1. 根据订单编号和用户ID查询订单
+        OrderInfo orderInfo = lambdaQuery()
+                .eq(OrderInfo::getOrderNo, orderNo)
+                .eq(OrderInfo::getUserId, userId)
+                .one();
+
+        // 2. 订单不存在或已不需要取消，则直接结束
+        if (orderInfo == null || !OrderStatusEnum.UNPAID.getCode().equals(orderInfo.getStatus())) {
+            throw new OrderException(OrderErrorCode.ORDER_STATUS_ERROR);
+        }
+
+        // 3. 只有仍然待支付的订单才能更新为已取消
+        boolean updated = lambdaUpdate()
+                .eq(OrderInfo::getId, orderInfo.getId())
+                .eq(OrderInfo::getStatus, OrderStatusEnum.UNPAID.getCode())
+                .set(OrderInfo::getStatus, OrderStatusEnum.CANCELLED.getCode())
+                .update();
+
+        // 4. 更新失败说明订单状态可能已被其他操作修改，不回补库存
+        if (!updated) {
+            throw new OrderException(OrderErrorCode.ORDER_STATUS_ERROR);
+        }
+
+        // 5. 订单成功取消后回补库存
+        restoreStock(String.valueOf(orderInfo.getId()));
+
     }
 
 }

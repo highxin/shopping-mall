@@ -1,15 +1,12 @@
 package com.mall.mallorder.service;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
-import com.mall.common.result.Result;
 import com.mall.mallorder.dto.OrderDTO;
 import com.mall.mallorder.dto.OrderPageDTO;
 import com.mall.mallorder.entity.OrderInfo;
 import com.mall.mallorder.vo.OrderInfoVO;
 import com.mall.mallorder.vo.OrderVO;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 
 
 public interface OrderInfoService extends IService<OrderInfo>{
@@ -77,4 +74,11 @@ public interface OrderInfoService extends IService<OrderInfo>{
      * @return 操作结果
      */
     String updateStatus(String orderId, Long userId, Integer newStatus);
+
+    /**
+     * 取消超时订单
+     * @param orderNo 订单编号
+     * @param userId 用户id
+     */
+    void cancelOrderByTimeout(String orderNo, Long userId);
 }
