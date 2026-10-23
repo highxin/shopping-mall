@@ -4,11 +4,15 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.mall.common.enums.StatusEnum;
 import com.mall.common.exception.BusinessException;
 import com.mall.mallproduct.category.entity.Category;
 import com.mall.mallproduct.category.service.CategoryService;
+import com.mall.common.dto.ProductIndexDTO;
 import com.mall.mallproduct.product.entity.Brand;
 import com.mall.mallproduct.product.service.BrandService;
+import com.mall.mallproduct.sku.entity.Sku;
+import com.mall.mallproduct.sku.service.SkuService;
 import com.mall.mallproduct.spu.dto.SpuDTO;
 import com.mall.mallproduct.spu.dto.SpuQueryDTO;
 import com.mall.mallproduct.spu.dto.SpuUpdateDTO;
@@ -18,6 +22,13 @@ import com.mall.mallproduct.spu.service.SpuService;
 import com.mall.mallproduct.spu.vo.SpuVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 /**
  * <p>描述: </p>
@@ -31,10 +42,12 @@ import org.springframework.stereotype.Service;
 public class SpuServiceImpl extends ServiceImpl<SpuMapper, Spu> implements SpuService {
     private final BrandService brandService;
     private final CategoryService categoryService;
+    private final SkuService skuService;
 
-    public SpuServiceImpl(BrandService brandService, CategoryService categoryService) {
+    public SpuServiceImpl(BrandService brandService, CategoryService categoryService, SkuService skuService) {
         this.brandService = brandService;
         this.categoryService = categoryService;
+        this.skuService = skuService;
     }
 
     @Override
@@ -131,6 +144,70 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, Spu> implements SpuSe
         if (category == null) {
             throw new BusinessException("分类不存在");
         }
+    }
+
+    @Override
+    public List<ProductIndexDTO> listForSearch() {
+
+        // 1. 查询所有未删除的 SPU
+        List<Spu> spuList = list();
+
+        if (spuList.isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        // 2. 获取所有 SPU ID
+        List<Long> spuIds = spuList.stream()
+                .map(Spu::getId)
+                .collect(Collectors.toList());
+
+        // 3. 一次性查询这些 SPU 对应的 SKU
+        List<Sku> skuList = skuService.list(
+                new LambdaQueryWrapper<Sku>()
+                        .in(Sku::getSpuId, spuIds)
+        );
+
+        // 4. 按 SPU ID 分组
+        Map<Long, List<Sku>> skuMap = skuList.stream()
+                .filter(sku -> Objects.equals(sku.getStatus(), StatusEnum.SELL_UP.getCode()))
+                .collect(Collectors.groupingBy(Sku::getSpuId));
+
+        // 5. 将 SPU 和 SKU 汇总成商品索引数据
+        return spuList.stream()
+                .map(spu -> {
+                    ProductIndexDTO dto = new ProductIndexDTO();
+
+                    BeanUtils.copyProperties(spu, dto);
+
+                    List<Sku> skus = skuMap.getOrDefault(
+                            spu.getId(), Collections.emptyList()
+                    );
+
+                    if (!skus.isEmpty()) {
+                        dto.setMinPrice(skus.stream()
+                                .map(Sku::getPrice)
+                                .filter(Objects::nonNull)
+                                .min(BigDecimal::compareTo)
+                                .orElse(null));
+
+                        dto.setMaxPrice(skus.stream()
+                                .map(Sku::getPrice)
+                                .filter(Objects::nonNull)
+                                .max(BigDecimal::compareTo)
+                                .orElse(null));
+
+                        dto.setTotalStock(skus.stream()
+                                .map(Sku::getStock)
+                                .filter(Objects::nonNull)
+                                .mapToInt(Integer::intValue)
+                                .sum());
+                    } else {
+                        dto.setTotalStock(0);
+                    }
+
+                    return dto;
+                })
+                .collect(Collectors.toList());
     }
 
 }

@@ -21,6 +21,11 @@ public class Sku {
      */
     private Long spuId;
 
+    /**
+     * 商品图
+     */
+    private String image;
+
 
     /**
      * SKU名称

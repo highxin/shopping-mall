@@ -20,6 +20,12 @@ public class SkuDTO {
 
 
     /**
+     * 商品图片
+     */
+    private String image;
+
+
+    /**
      * SKU名称
      *
      * 例如：

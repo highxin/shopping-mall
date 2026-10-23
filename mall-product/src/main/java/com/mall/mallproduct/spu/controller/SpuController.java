@@ -2,6 +2,7 @@ package com.mall.mallproduct.spu.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.mall.common.result.Result;
+import com.mall.common.dto.ProductIndexDTO;
 import com.mall.mallproduct.spu.dto.SpuDTO;
 import com.mall.mallproduct.spu.dto.SpuQueryDTO;
 import com.mall.mallproduct.spu.dto.SpuUpdateDTO;
@@ -9,6 +10,8 @@ import com.mall.mallproduct.spu.service.SpuService;
 import com.mall.mallproduct.spu.vo.SpuVO;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * <p>描述: </p>
@@ -20,11 +23,11 @@ import org.springframework.web.bind.annotation.*;
  */
 @RestController
 @RequestMapping("/product/spu")
-public class SupController {
+public class SpuController {
 
     private final SpuService spuService;
 
-    public SupController(SpuService spuService) {
+    public SpuController(SpuService spuService) {
         this.spuService = spuService;
     }
 
@@ -60,5 +63,10 @@ public class SupController {
     public Result<String> delete(@PathVariable Long id) {
         spuService.deleteSpu(id);
         return Result.success("商品删除成功");
+    }
+
+    @GetMapping("/search")
+    public Result<List<ProductIndexDTO>> search() {
+        return Result.success(spuService.listForSearch());
     }
 }

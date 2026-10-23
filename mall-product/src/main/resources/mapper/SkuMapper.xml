@@ -13,6 +13,7 @@
         s.spu_id,
         p.name AS spu_name,
         s.name,
+        s.image,
         s.price,
         s.stock,
         s.status
@@ -39,6 +40,7 @@
         <result property="spuId" column="spu_id"/>
         <result property="spuName" column="spu_name"/>
         <result property="name" column="name"/>
+        <result property="image" column="image"/>
         <result property="price" column="price"/>
         <result property="stock" column="stock"/>
         <result property="status" column="status"/>
@@ -58,6 +60,7 @@
         s.spu_id,
         p.name AS spu_name,
         s.name,
+        s.image,
         s.price,
         s.stock,
         s.status,

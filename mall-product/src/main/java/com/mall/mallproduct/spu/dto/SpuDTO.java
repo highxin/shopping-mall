@@ -10,6 +10,8 @@ public class SpuDTO {
     @NotBlank(message = "商品名称不能为空")
     private String name;
 
+    private String image;
+
     @NotNull(message = "品牌ID不能为空")
     private Long brandId;
 

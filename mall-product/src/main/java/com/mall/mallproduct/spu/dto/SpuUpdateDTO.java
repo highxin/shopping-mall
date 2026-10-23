@@ -13,6 +13,8 @@ public class SpuUpdateDTO {
     @NotBlank(message = "商品名称不能为空")
     private String name;
 
+    private String image;
+
     @NotNull(message = "品牌不能为空")
     private Long brandId;
 

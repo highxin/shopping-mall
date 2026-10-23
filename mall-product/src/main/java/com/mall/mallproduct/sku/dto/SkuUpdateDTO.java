@@ -24,6 +24,12 @@ public class SkuUpdateDTO {
 
 
     /**
+     * 商品图片
+     */
+    private String image;
+
+
+    /**
      * SKU名称
      */
     private String name;

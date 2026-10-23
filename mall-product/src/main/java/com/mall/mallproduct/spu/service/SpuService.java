@@ -2,11 +2,14 @@ package com.mall.mallproduct.spu.service;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.mall.common.dto.ProductIndexDTO;
 import com.mall.mallproduct.spu.dto.SpuDTO;
 import com.mall.mallproduct.spu.dto.SpuQueryDTO;
 import com.mall.mallproduct.spu.dto.SpuUpdateDTO;
 import com.mall.mallproduct.spu.entity.Spu;
 import com.mall.mallproduct.spu.vo.SpuVO;
+
+import java.util.List;
 
 /**
  * <p>描述: </p>
@@ -51,6 +54,13 @@ public interface SpuService extends IService<Spu> {
      * @param id SPU ID
      */
     void deleteSpu(Long id);
+
+    /**
+     * 查询商品索引所需的全部数据
+     *
+     * @return 商品索引数据列表
+     */
+    List<ProductIndexDTO> listForSearch();
 
 
 }
