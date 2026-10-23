@@ -54,7 +54,8 @@ public class SpecServiceImpl extends ServiceImpl<SpecMapper, Spec> implements Sp
     @Override
     public void saveSpec(SpecDTO specDTO) {
         // 查询SPU是否存在
-        Spec spu = getById(specDTO.getSpuId());
+        Spu spu = spuMapper.selectOne(
+                Wrappers.lambdaQuery(Spu.class).eq(Spu::getId, specDTO.getSpuId()));
         if (spu == null) {
             throw new BusinessException("SPU不存在");
         }
