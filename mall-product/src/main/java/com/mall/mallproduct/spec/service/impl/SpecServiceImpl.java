@@ -1,6 +1,7 @@
 package com.mall.mallproduct.spec.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.mall.common.exception.BusinessException;
 import com.mall.mallproduct.spec.dto.SpecDTO;
 import com.mall.mallproduct.spec.dto.SpecUpdateDTO;
@@ -8,6 +9,8 @@ import com.mall.mallproduct.spec.service.SpecService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall.mallproduct.spec.entity.Spec;
 import com.mall.mallproduct.spec.mapper.SpecMapper;
+import com.mall.mallproduct.spu.entity.Spu;
+import com.mall.mallproduct.spu.mapper.SpuMapper;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +27,13 @@ import java.util.List;
  */
 @Service
 public class SpecServiceImpl extends ServiceImpl<SpecMapper, Spec> implements SpecService {
+    private final SpuMapper spuMapper;
+
+
+    public SpecServiceImpl(SpuMapper spuMapper) {
+        this.spuMapper = spuMapper;
+    }
+
 
     @Override
     public void deleteById(Long id) {
