@@ -51,6 +51,8 @@
                     column="spec_name"/>
             <result property="specValue"
                     column="spec_value"/>
+            <result property="specValueId"
+                    column="spec_value_id"/>
         </collection>
     </resultMap>
 
@@ -65,7 +67,8 @@
         s.stock,
         s.status,
         spec.name AS spec_name,
-        sv.value AS spec_value
+        sv.value AS spec_value,
+        sv.id AS spec_value_id
         FROM product_sku s
         LEFT JOIN product_spu p
                   ON s.spu_id = p.id

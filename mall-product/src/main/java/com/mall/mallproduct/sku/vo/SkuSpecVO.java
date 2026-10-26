@@ -17,4 +17,10 @@ public class SkuSpecVO {
      */
     private String specValue;
 
+
+    /**
+     * 规格值ID，编辑 SKU 时用于回显已选规格
+     */
+    private Long specValueId;
+
 }
