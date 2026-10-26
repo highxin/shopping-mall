@@ -57,6 +57,10 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, Spu> implements SpuSe
 
         Spu spu = new Spu();
         BeanUtils.copyProperties(spuDTO, spu);
+        // 未指定状态时默认下架，避免写入 null
+        if (spu.getStatus() == null) {
+            spu.setStatus(StatusEnum.SELL_DOWN.getCode());
+        }
         save(spu);
     }
 
@@ -116,7 +120,12 @@ public class SpuServiceImpl extends ServiceImpl<SpuMapper, Spu> implements SpuSe
         // 校验品牌和分类是否存在
         checkBrandAndCategoryExist(spuUpdateDTO.getBrandId(), spuUpdateDTO.getCategoryId());
 
+        Integer oldStatus = spu.getStatus();
         BeanUtils.copyProperties(spuUpdateDTO, spu);
+        // 未传状态时保持原状态
+        if (spuUpdateDTO.getStatus() == null) {
+            spu.setStatus(oldStatus);
+        }
         updateById(spu);
     }
 

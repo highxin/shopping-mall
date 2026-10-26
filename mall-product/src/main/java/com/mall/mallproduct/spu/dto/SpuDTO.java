@@ -19,4 +19,9 @@ public class SpuDTO {
     private Long categoryId;
 
     private String description;
+
+    /**
+     * 上架状态：1 在售、0 下架，为空时默认下架
+     */
+    private Integer status;
 }
