@@ -6,10 +6,12 @@ import com.mall.mallorder.service.OrderInfoService;
 import lombok.RequiredArgsConstructor;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
 import org.apache.rocketmq.spring.core.RocketMQListener;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "mall.order.mq.consumer-enabled", havingValue = "true", matchIfMissing = true)
 @RocketMQMessageListener(
         topic = OrderMqConstant.ORDER_CANCEL_TOPIC,
         consumerGroup = "mall-order-cancel-consumer"

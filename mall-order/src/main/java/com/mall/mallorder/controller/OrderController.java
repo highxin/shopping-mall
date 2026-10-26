@@ -33,7 +33,7 @@ public class OrderController {
     }
 
     @GetMapping("/list")
-    public Result<IPage<OrderInfoVO>> getOrderList(@RequestBody OrderPageDTO orderPageDTO, @RequestHeader Long userId){
+    public Result<IPage<OrderInfoVO>> getOrderList(OrderPageDTO orderPageDTO, @RequestHeader Long userId){
         IPage<OrderInfoVO> voPage = orderService.page(orderPageDTO, userId);
         return Result.success(voPage);
     }
