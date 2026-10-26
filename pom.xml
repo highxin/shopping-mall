@@ -23,6 +23,7 @@
         <module>mall-gateway</module>
         <module>mall-cart</module>
         <module>mall-search</module>
+        <module>mall-coupon</module>
     </modules>
 
     <properties>
