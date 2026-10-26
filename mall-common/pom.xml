@@ -32,6 +32,12 @@
             <artifactId>spring-boot-starter-security</artifactId>
             <optional>true</optional>
         </dependency>
+        <!-- spring-tx：提供 org.springframework.dao.DuplicateKeyException（数据库唯一键冲突异常），optional 仅编译期需要 -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-tx</artifactId>
+            <optional>true</optional>
+        </dependency>
         <!-- JWT -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
