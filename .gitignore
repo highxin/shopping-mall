@@ -31,3 +31,4 @@ build/
 
 ### VS Code ###
 .vscode/
+/接口清单.md

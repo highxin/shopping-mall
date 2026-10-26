@@ -1,7 +1,9 @@
 package com.mall.malluser.service.impl;
 
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.core.toolkit.Wrappers;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall.common.exception.BusinessException;
 import com.mall.common.utils.JwtUtil;
@@ -11,10 +13,12 @@ import com.mall.malluser.entity.UserInfo;
 import com.mall.malluser.mapper.UserInfoMapper;
 import com.mall.malluser.service.UserService;
 import com.mall.malluser.vo.LoginVO;
+import com.mall.malluser.vo.UserVO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 
 @Service
@@ -71,5 +75,34 @@ public class UserServiceImpl extends ServiceImpl<UserInfoMapper, UserInfo> imple
         newUser.setPassword(passwordEncoder.encode(dto.getPassword()));
         //3. 保存
         this.save(newUser);
+    }
+
+    @Override
+    public IPage<UserVO> pageUser(Long pageNum, Long pageSize, String keyword) {
+        Page<UserInfo> page = this.lambdaQuery()
+                .and(StringUtils.hasText(keyword), w -> w
+                        .like(UserInfo::getUsername, keyword)
+                        .or()
+                        .like(UserInfo::getPhone, keyword))
+                .orderByDesc(UserInfo::getCreateTime)
+                .page(new Page<>(pageNum == null ? 1 : pageNum, pageSize == null ? 10 : pageSize));
+
+        // 实体转 VO，清除密码
+        return page.convert(user -> {
+            UserVO vo = new UserVO();
+            BeanUtils.copyProperties(user, vo);
+            return vo;
+        });
+    }
+
+    @Override
+    public void updateStatus(Long id, Integer status) {
+        UserInfo user = this.getById(id);
+        if (user == null) {
+            throw new BusinessException("用户不存在");
+        }
+        this.update(Wrappers.<UserInfo>lambdaUpdate()
+                .eq(UserInfo::getId, id)
+                .set(UserInfo::getStatus, status));
     }
 }
