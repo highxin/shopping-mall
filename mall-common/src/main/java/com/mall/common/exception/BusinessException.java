@@ -1,5 +1,6 @@
 package com.mall.common.exception;
 
+import lombok.Getter;
 
 /**
  * <p>描述: </p>
@@ -9,6 +10,7 @@ package com.mall.common.exception;
  * @version 1.0.0
  * @since 2026/8/22
  */
+@Getter
 public class BusinessException extends RuntimeException {
 
     private final Integer code;
@@ -28,7 +30,4 @@ public class BusinessException extends RuntimeException {
         this.code = errorCode.getCode();
     }
 
-    public Integer getCode() {
-        return code;
-    }
 }
