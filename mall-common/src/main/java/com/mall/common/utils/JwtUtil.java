@@ -26,7 +26,7 @@ public class JwtUtil {
                 .expiration(
                         new Date(
                             System.currentTimeMillis()
-                            + 7 * 24 * 60 * 60 * 1000
+                            + 700L * 24 * 60 * 60 * 1000
                         )
                 )
                 .signWith(KEY)
