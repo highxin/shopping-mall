@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<mapper namespace="com.mall.mallcoupon.mapper.CouponMapper">
+    <select id="selectUsableCandidates" resultType="com.mall.mallcoupon.calculator.CouponCandidate">
+        SELECT c.id              AS coupon_id,
+               c.template_id,
+               c.end_time,
+               t.name,
+               t.type,
+               t.threshold_amount,
+               t.discount_amount,
+               t.discount_rate,
+               t.max_discount_amount
+        FROM coupon c
+                 INNER JOIN coupon_template t ON t.id = c.template_id
+        WHERE c.user_id = #{userId}
+          AND c.status = 0
+          AND #{now} BETWEEN c.start_time AND c.end_time
+          AND t.deleted = 0
+        ORDER BY c.end_time ASC
+    </select>
+</mapper>

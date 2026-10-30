@@ -1,11 +1,15 @@
 package com.mall.mallcoupon.controller;
 
+import com.mall.common.dto.coupon.CouponPreviewDTO;
+import com.mall.common.vo.coupon.CouponPreviewVO;
 import com.mall.common.result.Result;
 import com.mall.mallcoupon.enums.CouponErrorCode;
 import com.mall.mallcoupon.exception.CouponException;
+import com.mall.mallcoupon.service.CouponDiscountService;
 import com.mall.mallcoupon.service.CouponReceiveService;
 import com.mall.mallcoupon.vo.CouponTemplateVO;
 import com.mall.mallcoupon.vo.CouponVO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +22,7 @@ import java.util.List;
 public class CouponController {
 
     private final CouponReceiveService receiveService;
+    private final CouponDiscountService discountService;
 
     @GetMapping("/center")
     public Result<List<CouponTemplateVO>> center(@RequestHeader Long userId) {
@@ -40,5 +45,11 @@ public class CouponController {
     public Result<List<CouponVO>> my(@RequestHeader Long userId,
                                      @RequestParam(required = false) Integer status) {
         return Result.success(receiveService.myCoupons(userId, status));
+    }
+
+    @PostMapping("/preview")
+    public Result<CouponPreviewVO> preview(@Valid @RequestBody CouponPreviewDTO dto,
+                                           @RequestHeader Long userId) {
+        return Result.success(discountService.preview(userId, dto));
     }
 }

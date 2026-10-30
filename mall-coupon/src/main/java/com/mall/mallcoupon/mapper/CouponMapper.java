@@ -1,6 +1,7 @@
 package com.mall.mallcoupon.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.mall.mallcoupon.calculator.CouponCandidate;
 import com.mall.mallcoupon.entity.Coupon;
 import com.mall.mallcoupon.vo.CouponVO;
 import org.apache.ibatis.annotations.Mapper;
@@ -62,6 +63,6 @@ public interface CouponMapper extends BaseMapper<Coupon> {
     /**
      * 订单服务试算/锁券时查询用户的可用券（联表带模板信息）。
      */
-//    List<CouponCandidate> selectUsableCandidates(@Param("userId") Long userId,
-//                                                 @Param("now") LocalDateTime now);
+    List<CouponCandidate> selectUsableCandidates(@Param("userId") Long userId,
+                                                 @Param("now") LocalDateTime now);
 }
