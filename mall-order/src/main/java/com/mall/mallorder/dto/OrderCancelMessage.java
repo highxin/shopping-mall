@@ -4,6 +4,6 @@ import lombok.Data;
 
 @Data
 public class OrderCancelMessage {
-    private String orderNo;
+    private Long orderId;
     private Long userId;
 }

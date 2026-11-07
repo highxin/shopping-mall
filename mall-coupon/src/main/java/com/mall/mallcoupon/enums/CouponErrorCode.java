@@ -24,7 +24,8 @@ public enum CouponErrorCode implements ErrorCode {
     SECKILL_REPEAT(60014, "请勿重复提交"),
     SECKILL_QUEUEING(60015, "排队中，请稍后查询"),
     INTERNAL_TOKEN_INVALID(60016, "内部调用鉴权失败"),
-    ;
+    COUPON_NOT_STARTED(60017, "优惠券未开始"),
+    COUPON_LOCKED(60018, "优惠卷被锁定");
 
     private final Integer code;
     private final String message;

@@ -36,6 +36,12 @@ public class OrderInfo {
     
     private Integer status;
 
+    private Long couponId;
+
+    private BigDecimal discountAmount;
+
+    private BigDecimal payAmount;
+
     private LocalDateTime createTime;
 
     private LocalDateTime updateTime;

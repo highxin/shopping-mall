@@ -77,8 +77,8 @@ public interface OrderInfoService extends IService<OrderInfo>{
 
     /**
      * 取消超时订单
-     * @param orderNo 订单编号
+     * @param orderId 订单id
      * @param userId 用户id
      */
-    void cancelOrderByTimeout(String orderNo, Long userId);
+    void cancelOrderByTimeout(Long orderId, Long userId);
 }

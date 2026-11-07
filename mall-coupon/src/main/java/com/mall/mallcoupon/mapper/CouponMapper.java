@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,24 +38,24 @@ public interface CouponMapper extends BaseMapper<Coupon> {
                                    @Param("status") Integer status,
                                    @Param("now") LocalDateTime now);
 
-//    /**
-//     * 锁券：只有 UNUSED 且未过期、属于当前用户的券才能锁。
-//     * 返回影响行数，0 表示竞争失败/状态不对。
-//     */
-//    int lockCoupon(@Param("couponId") Long couponId,
-//                   @Param("userId") Long userId,
-//                   @Param("orderNo") String orderNo,
-//                   @Param("discountAmount") BigDecimal discountAmount,
-//                   @Param("now") LocalDateTime now);
-//
-//    int useCoupon(@Param("couponId") Long couponId,
-//                  @Param("userId") Long userId,
-//                  @Param("orderNo") String orderNo,
-//                  @Param("now") LocalDateTime now);
-//
-//    int releaseCoupon(@Param("couponId") Long couponId,
-//                      @Param("userId") Long userId,
-//                      @Param("orderNo") String orderNo);
+    /**
+     * 锁券：只有 UNUSED 且未过期、属于当前用户的券才能锁。
+     * 返回影响行数，0 表示竞争失败/状态不对。
+     */
+    int lockCoupon(@Param("couponId") Long couponId,
+                   @Param("userId") Long userId,
+                   @Param("orderNo") String orderNo,
+                   @Param("discountAmount") BigDecimal discountAmount,
+                   @Param("now") LocalDateTime now);
+
+    int useCoupon(@Param("couponId") Long couponId,
+                  @Param("userId") Long userId,
+                  @Param("orderNo") String orderNo,
+                  @Param("now") LocalDateTime now);
+
+    int releaseCoupon(@Param("couponId") Long couponId,
+                      @Param("userId") Long userId,
+                      @Param("orderNo") String orderNo);
 
 //    /**
 //     * 批量过期，返回实际更新行数；用 LIMIT 避免一次锁太多行。

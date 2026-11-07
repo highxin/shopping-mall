@@ -6,12 +6,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.mall.common.constants.OrderMqConstant;
 import com.mall.common.dto.SkuStockDTO;
+import com.mall.common.dto.coupon.CouponLockDTO;
+import com.mall.common.dto.coupon.CouponReleaseDTO;
+import com.mall.common.dto.coupon.CouponUseDTO;
 import com.mall.common.enums.OrderStatusEnum;
 import com.mall.common.exception.BusinessException;
 import com.mall.common.exception.OrderException;
 import com.mall.common.exception.errorcode.OrderErrorCode;
 import com.mall.common.result.Result;
 import com.mall.common.dto.DeleteCartDTO;
+import com.mall.common.vo.coupon.CouponLockResultVO;
 import com.mall.mallorder.constant.OrderTimeConstant;
 import com.mall.mallorder.dto.OrderCancelMessage;
 import com.mall.mallorder.dto.OrderDTO;
@@ -21,6 +25,7 @@ import com.mall.mallorder.entity.OrderInfo;
 import com.mall.mallorder.entity.OrderItem;
 import com.mall.mallorder.feign.AddressFeignClient;
 import com.mall.mallorder.feign.CartFeignClient;
+import com.mall.mallorder.feign.CouponFeignClient;
 import com.mall.mallorder.feign.ProductFeignClient;
 import com.mall.mallorder.mapper.OrderInfoMapper;
 import com.mall.mallorder.service.OrderAddressService;
@@ -35,6 +40,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -53,6 +59,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     private final AddressFeignClient addressFeignClient;
     private final CartFeignClient cartFeignClient;
     private final ProductFeignClient productFeignClient;
+    private final CouponFeignClient couponFeignClient;
 
     @GlobalTransactional(
             name = "create-order-tx",
@@ -95,6 +102,31 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             totalAmount=totalAmount.add(itemAmount);
         }
         // 5.保存订单总金额
+        // 8. 锁券（如果有选了优惠券）
+        CouponLockResultVO couponResult = null;
+        if (orderDTO.getCouponId() != null) {
+            CouponLockDTO lockDTO = new CouponLockDTO();
+            lockDTO.setCouponId(orderDTO.getCouponId());
+            lockDTO.setUserId(userId);
+            lockDTO.setOrderNo(orderNo);
+            lockDTO.setOrderAmount(totalAmount);
+
+            Result<CouponLockResultVO> lockResult = couponFeignClient.lock(lockDTO);
+            if (lockResult.getCode() != 200 || lockResult.getData() == null) {
+                throw new BusinessException(lockResult.getMsg());
+            }
+            couponResult = lockResult.getData();
+        }
+
+        BigDecimal discountAmount = couponResult == null
+                ? BigDecimal.ZERO : couponResult.getDiscountAmount();
+        BigDecimal payAmount = totalAmount.subtract(discountAmount)
+                .max(BigDecimal.ZERO)
+                .setScale(2, RoundingMode.HALF_UP);
+
+        order.setCouponId(orderDTO.getCouponId());
+        order.setDiscountAmount(discountAmount);
+        order.setPayAmount(payAmount);
         order.setTotalAmount(totalAmount);
         save(order);
         // 6.保存订单地址
@@ -108,7 +140,7 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
         // 8.发送订单取消消息
         OrderCancelMessage message = new OrderCancelMessage();
-        message.setOrderNo(orderNo);
+        message.setOrderId(order.getId());
         message.setUserId(userId);
         rocketMQSendCancelMessage(message);
 
@@ -116,8 +148,8 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
             DeleteCartDTO dto = new DeleteCartDTO();
             dto.setSkuIds(skuIds);
             cartFeignClient.deleteCart(dto, userId);
-        // 10.返回订单号
-        return orderNo;
+        // 10.返回订单id
+        return String.valueOf(order.getId());
 
     }
 
@@ -224,7 +256,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         //2.校验订单状态
         Integer status = orderInfo.getStatus();
         if (!OrderStatusTransition.canTransition(status, OrderStatusEnum.CANCELLED.getCode())) {
-            throw new OrderException(OrderErrorCode.ORDER_STATUS_ERROR);
+            throw new OrderException(
+                    OrderErrorCode.ORDER_STATUS_ERROR,
+                    OrderStatusTransition.buildErrorMessage(status, OrderStatusEnum.CANCELLED.getCode())
+            );
         }
         //3.回补库存(创建订单时已扣减,取消需归还)
         restoreStock(orderId);
@@ -233,6 +268,17 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                 .eq(OrderInfo::getId, orderInfo.getId())
                 .set(OrderInfo::getStatus, OrderStatusEnum.CANCELLED.getCode())
                 .update();
+        if (orderInfo.getCouponId() != null) {
+            CouponReleaseDTO releaseDTO = new CouponReleaseDTO();
+            releaseDTO.setCouponId(orderInfo.getCouponId());
+            releaseDTO.setUserId(userId);
+            releaseDTO.setOrderNo(orderInfo.getOrderNo());
+
+            Result<Void> result = couponFeignClient.release(releaseDTO);
+            if (result.getCode() != 200) {
+                throw new BusinessException(result.getMsg());
+            }
+        }
         return orderInfo.getOrderNo()+"取消成功";
     }
 
@@ -259,12 +305,30 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     }
 
     @Override
+    @GlobalTransactional(name = "pay-order-tx", rollbackFor = Exception.class, timeoutMills = 300000)
     public String payOrder(String orderId, Long userId) {
-        return updateStatus(
-                orderId,
-                userId,
-                OrderStatusEnum.PAID.getCode()
-        );
+        OrderInfo order = lambdaQuery()
+                .eq(OrderInfo::getId, orderId)
+                .eq(OrderInfo::getUserId, userId)
+                .one();
+        if (order == null) {
+            throw new OrderException(OrderErrorCode.ORDER_NOT_FOUND);
+        }
+
+        String orderNo = updateStatus(orderId, userId, OrderStatusEnum.PAID.getCode());
+
+        if (order.getCouponId() != null) {
+            CouponUseDTO useDTO = new CouponUseDTO();
+            useDTO.setCouponId(order.getCouponId());
+            useDTO.setUserId(userId);
+            useDTO.setOrderNo(orderNo);
+
+            Result<Void> result = couponFeignClient.use(useDTO);
+            if (result.getCode() != 200) {
+                throw new BusinessException(result.getMsg());
+            }
+        }
+        return orderNo;
     }
 
     @Override
@@ -287,7 +351,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
         }
         Integer oldStatus = orderInfo.getStatus();
         if(!OrderStatusTransition.canTransition(oldStatus, newStatus)){
-            throw new OrderException(OrderErrorCode.ORDER_STATUS_ERROR);
+            throw new OrderException(
+                    OrderErrorCode.ORDER_STATUS_ERROR,
+                    OrderStatusTransition.buildErrorMessage(oldStatus, newStatus)
+            );
         }
         boolean update = lambdaUpdate()
                         .eq(OrderInfo::getId,orderId)
@@ -295,7 +362,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
                         .set(OrderInfo::getStatus,newStatus)
                         .update();
         if(!update){
-            throw new OrderException(OrderErrorCode.ORDER_STATUS_ERROR);
+            throw new OrderException(
+                    OrderErrorCode.ORDER_STATUS_ERROR,
+                    "订单状态已发生变化，请刷新后重试"
+            );
         }
         return orderInfo.getOrderNo();
     }
@@ -387,16 +457,22 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
     // 订单超时取消方法
     @Override
     @GlobalTransactional(name = "cancel-order-timeout-tx", rollbackFor = Exception.class, timeoutMills = 300000)
-    public void cancelOrderByTimeout(String orderNo, Long userId) {
-        // 1. 根据订单编号和用户ID查询订单
+    public void cancelOrderByTimeout(Long orderId, Long userId) {
+        // 1. 根据订单id和用户ID查询订单
         OrderInfo orderInfo = lambdaQuery()
-                .eq(OrderInfo::getOrderNo, orderNo)
+                .eq(OrderInfo::getId, orderId)
                 .eq(OrderInfo::getUserId, userId)
                 .one();
 
         // 2. 订单不存在或已不需要取消，则直接结束
-        if (orderInfo == null || !OrderStatusEnum.UNPAID.getCode().equals(orderInfo.getStatus())) {
-            throw new OrderException(OrderErrorCode.ORDER_STATUS_ERROR);
+        if (orderInfo == null) {
+            throw new OrderException(OrderErrorCode.ORDER_NOT_FOUND, "超时取消失败：订单不存在，id=" + orderId);
+        }
+        if (!OrderStatusEnum.UNPAID.getCode().equals(orderInfo.getStatus())) {
+            throw new OrderException(
+                    OrderErrorCode.ORDER_STATUS_ERROR,
+                    OrderStatusTransition.buildErrorMessage(orderInfo.getStatus(), OrderStatusEnum.CANCELLED.getCode())
+            );
         }
 
         // 3. 只有仍然待支付的订单才能更新为已取消
@@ -408,7 +484,10 @@ public class OrderInfoServiceImpl extends ServiceImpl<OrderInfoMapper, OrderInfo
 
         // 4. 更新失败说明订单状态可能已被其他操作修改，不回补库存
         if (!updated) {
-            throw new OrderException(OrderErrorCode.ORDER_STATUS_ERROR);
+            throw new OrderException(
+                    OrderErrorCode.ORDER_STATUS_ERROR,
+                    "超时取消失败：订单状态已发生变化，id=" + orderId
+            );
         }
 
         // 5. 订单成功取消后回补库存

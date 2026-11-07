@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 @Data
 public class CartItemVO {
 
-
     /**
      * SKU ID
      */

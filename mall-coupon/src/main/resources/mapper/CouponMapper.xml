@@ -24,4 +24,41 @@
           AND t.deleted = 0
         ORDER BY c.end_time ASC
     </select>
+
+    <!-- 锁券：仅未使用(0)且属于自己的券可抢占，成功返回影响行数(rows=1)，并发失败返回0 -->
+    <update id="lockCoupon">
+        UPDATE coupon
+        SET status = 1,
+            order_no = #{orderNo},
+            discount_amount = #{discountAmount},
+            lock_time = #{now},
+            update_time = #{now}
+        WHERE id = #{couponId}
+          AND user_id = #{userId}
+          AND status = 0
+          AND #{now} BETWEEN start_time AND end_time
+    </update>
+    <update id="useCoupon">
+        UPDATE coupon
+        SET status = 2,
+            use_time = #{now},
+            update_time = #{now}
+        WHERE id = #{couponId}
+          AND user_id = #{userId}
+          AND status = 1
+          AND #{now} BETWEEN start_time AND end_time
+    </update>
+    <update id="releaseCoupon">
+        UPDATE coupon
+        SET status = 0,
+            order_no = NULL,
+            discount_amount = NULL,
+            lock_time = NULL,
+            use_time = NULL,
+            update_time = #{now}
+        WHERE id = #{couponId}
+          AND user_id = #{userId}
+          AND status = 1
+          AND #{now} BETWEEN start_time AND end_time
+    </update>
 </mapper>

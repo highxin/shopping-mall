@@ -22,6 +22,6 @@ public class OrderCancelConsumer implements RocketMQListener<OrderCancelMessage>
 
     @Override
     public void onMessage(OrderCancelMessage message) {
-        orderInfoService.cancelOrderByTimeout(message.getOrderNo(), message.getUserId());
+        orderInfoService.cancelOrderByTimeout(message.getOrderId(), message.getUserId());
     }
 }

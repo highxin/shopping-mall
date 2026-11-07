@@ -37,7 +37,6 @@ public class CouponTemplateServiceImpl extends ServiceImpl<CouponTemplateMapper,
         validate(dto);
         CouponTemplate template = new CouponTemplate();
         BeanUtils.copyProperties(dto, template);
-        template.setDiscountRate(dto.getDiscountAmount().divide(dto.getThresholdAmount(),4, RoundingMode.HALF_UP));
         template.setRemainingStock(dto.getTotalStock());
         template.setStatus(TemplateStatusEnum.DRAFT.getCode());
         save(template);

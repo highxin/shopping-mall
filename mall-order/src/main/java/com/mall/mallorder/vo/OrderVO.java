@@ -42,6 +42,21 @@ public class OrderVO {
      */
     private List<OrderItemVO> items;
 
+    /**
+     * 优惠券ID
+     */
+    private Long couponId;
+
+    /**
+     * 优惠金额
+     */
+    private BigDecimal discountAmount;
+
+    /**
+     * 实付金额
+     */
+    private BigDecimal payAmount;
+
 
     /**
      * 地址
